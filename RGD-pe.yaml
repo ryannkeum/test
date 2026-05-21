@@ -31,6 +31,8 @@ spec:
       template:
         apiVersion: v1
         kind: ConfigMap
+        metadata:
+          name: ${schema.spec.name}-configmap
         data:
           BUCKET_NAME: ${bucket.spec.name}
           BUCKET_ARN: ${bucket.status.ackResourceMetadata.arn}
