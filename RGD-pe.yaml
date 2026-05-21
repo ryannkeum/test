@@ -1,0 +1,67 @@
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: web-application
+  namespace: '260521'
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: WebApplication
+    spec:
+      name: string
+      image: string | default="nginx:1.25"
+      replicas: integer | default=3
+    status:
+      bucketArn: ${bucket.status.ackResourceMetadata.arn}
+      ready: ${deployment.status.readyReplicas == spec.replicas}
+
+  resources:
+    # 1. S3 Bucket (ACK) — 가장 먼저 생성
+    - id: bucket
+      template:
+        apiVersion: s3.services.k8s.aws/v1alpha1
+        kind: Bucket
+        metadata:
+          name: ${spec.name}-assets
+          annotations:
+            services.k8s.aws/deletion-policy: retain   # 데모 중 실수로 삭제 방지
+        spec:
+          name: ${spec.name}-assets
+
+    # 2. Deployment — bucket ARN을 env var로 주입 (CEL)
+    - id: deployment
+      template:
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: ${spec.name}
+        spec:
+          replicas: ${spec.replicas}
+          selector:
+            matchLabels:
+              app: ${spec.name}
+          template:
+            metadata:
+              labels:
+                app: ${spec.name}
+            spec:
+              containers:
+                - name: app
+                  image: ${spec.image}
+                  env:
+                    - name: BUCKET_ARN
+                      value: ${bucket.status.ackResourceMetadata.arn}  # CEL 주입
+
+    # 3. Service — Deployment에 자동 연결
+    - id: service
+      template:
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: ${spec.name}
+        spec:
+          selector:
+            app: ${spec.name}
+          ports:
+            - port: 80
+              targetPort: 80
