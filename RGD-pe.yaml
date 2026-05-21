@@ -13,7 +13,7 @@ spec:
       replicas: integer | default=3
     status:
       bucketArn: ${bucket.status.ackResourceMetadata.arn}
-      ready: ${deployment.status.readyReplicas == schema.spec.replicas}
+      ready: ${deployment.status.?readyReplicas > 0}
   resources:
     - id: bucket
       template:
