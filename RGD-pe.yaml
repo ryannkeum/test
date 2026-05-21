@@ -13,7 +13,7 @@ spec:
       replicas: integer | default=3
     status:
       bucketArn: ${bucket.status.ackResourceMetadata.arn}
-      ready: ${deployment.status.readyReplicas == spec.replicas}
+      ready: ${deployment.status.readyReplicas == schema.spec.replicas}
 
   resources:
     # 1. S3 Bucket (ACK) — 가장 먼저 생성
