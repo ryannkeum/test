@@ -58,7 +58,7 @@ spec:
                   image: ${schema.spec.image}
                   envFrom:
                   - configMapRef:
-                      name: ${config.metadata.name}
+                      name: ${configmap.metadata.name}
                   # env:
                   #   - name: BUCKET_ARN
                   #     value: ${bucket.status.ackResourceMetadata.arn}
