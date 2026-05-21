@@ -1,0 +1,21 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kro-platform-admin
+rules:
+  - apiGroups: ["kro.run"]
+    resources: ["resourcegraphdefinitions"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kro-platform-admin-binding
+subjects:
+  - kind: ServiceAccount
+    name: platform-admin
+    namespace: '260521'
+roleRef:
+  kind: ClusterRole
+  name: kro-platform-admin
+  apiGroup: rbac.authorization.k8s.io

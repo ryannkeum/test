@@ -1,0 +1,9 @@
+apiVersion: services.k8s.aws/v1alpha1
+kind: IAMRoleSelector
+metadata:
+  name: platform-team-config
+spec:
+  arn: arn:aws:iam::905418051405:role/platform-team-role
+  namespaceSelector:
+    names:
+      - '260521' # platform-team
